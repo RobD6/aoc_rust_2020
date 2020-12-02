@@ -7,7 +7,7 @@ pub fn input_generator(input: &str) -> Vec<u32> {
 pub fn solve_part1(input: &[u32]) -> u32 {
     for i in 0..input.len(){
         let num = input[i];
-        for j in i..input.len() {
+        for j in i+1..input.len() {
             let num2 = input[j];
 
             if num+num2 == 2020 {
