@@ -11,11 +11,9 @@ pub fn part1 (input: &Vec<Vec<bool>>) -> u32{
 
 #[aoc(day3, part2)]
 pub fn part2 (input: &Vec<Vec<bool>>) -> u32{
-    count_collisions(input, (1, 1)) *
-    count_collisions(input, (3, 1)) * 
-    count_collisions(input, (5, 1)) * 
-    count_collisions(input, (7, 1)) * 
-    count_collisions(input, (1, 2))
+    [(1,1), (3,1), (5,1), (7,1), (1,2)].iter().
+        map(|step| count_collisions(input, *step)).
+        product()
 }
 
 pub fn count_collisions(input: &Vec<Vec<bool>>, step: (usize, usize)) -> u32 {
