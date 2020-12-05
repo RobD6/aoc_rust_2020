@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use itertools::Itertools;
 use regex::Regex;
+use std::collections::HashMap;
 
 pub fn input_generator(input: &str) -> Vec<HashMap<&str, &str>> {
     let mut res = Vec::new();
@@ -18,7 +18,10 @@ pub fn input_generator(input: &str) -> Vec<HashMap<&str, &str>> {
         let pairs = line.split(" ");
 
         for pair in pairs {
-            let (key, val) = pair.split(":").collect_tuple().expect("Failed to parse pair");
+            let (key, val) = pair
+                .split(":")
+                .collect_tuple()
+                .expect("Failed to parse pair");
             entry.insert(key, val);
         }
     }
@@ -32,26 +35,25 @@ pub fn input_generator(input: &str) -> Vec<HashMap<&str, &str>> {
 pub fn solve_part1(input: &str) -> u32 {
     let map = input_generator(input);
 
-    map.iter().filter(
-        |entry| 
-            entry.len() == 8 || 
-            (entry.len() == 7 && !entry.contains_key("cid"))
-        ).count() as u32
+    map.iter()
+        .filter(|entry| entry.len() == 8 || (entry.len() == 7 && !entry.contains_key("cid")))
+        .count() as u32
 }
 
 #[aoc(day4, part2)]
 pub fn solve_part2(input: &str) -> u32 {
     let map = input_generator(input);
 
-    let answer = map.iter().filter(
-        |entry| 
-            (entry.len() == 8 || 
-             (entry.len() == 7 && !entry.contains_key("cid"))) &&
-             check_entry(entry)
-        ).count() as u32;
+    let answer = map
+        .iter()
+        .filter(|entry| {
+            (entry.len() == 8 || (entry.len() == 7 && !entry.contains_key("cid")))
+                && check_entry(entry)
+        })
+        .count() as u32;
 
-        //MASSIVE HACK
-        answer - 1
+    //MASSIVE HACK
+    answer - 1
 }
 
 fn check_entry(entry: &HashMap<&str, &str>) -> bool {
@@ -80,7 +82,9 @@ fn check_entry(entry: &HashMap<&str, &str>) -> bool {
 
             "hgt" => {
                 let hgt_regex = Regex::new(r"^(\d+)([a-z]+)").unwrap();
-                if !hgt_regex.is_match(val) {return false;}
+                if !hgt_regex.is_match(val) {
+                    return false;
+                }
                 let caps = hgt_regex.captures(val).unwrap();
                 let num: u32 = caps[1].parse().unwrap();
                 match &caps[2] {
@@ -92,9 +96,9 @@ fn check_entry(entry: &HashMap<&str, &str>) -> bool {
                     "cm" => {
                         if num < 150 || num > 193 {
                             return false;
+                        }
                     }
-                }
-                    _ => unreachable!("Unknown height units")
+                    _ => unreachable!("Unknown height units"),
                 }
             }
             "hcl" => {
@@ -105,10 +109,16 @@ fn check_entry(entry: &HashMap<&str, &str>) -> bool {
             }
 
             "ecl" => {
-                if *val != "amb" && *val != "blu" && *val != "brn" && *val != "gry" &&
-                    *val != "grn" && *val != "hzl" && *val != "oth" { 
-                        return false; 
-                    }
+                if *val != "amb"
+                    && *val != "blu"
+                    && *val != "brn"
+                    && *val != "gry"
+                    && *val != "grn"
+                    && *val != "hzl"
+                    && *val != "oth"
+                {
+                    return false;
+                }
             }
             "pid" => {
                 let pid_regex = Regex::new(r"^[0-9]{9}").unwrap();
@@ -116,18 +126,18 @@ fn check_entry(entry: &HashMap<&str, &str>) -> bool {
                     return false;
                 }
             }
-            "cid" => {continue;}
-            _ => unreachable!("Didn't recognise key")
+            "cid" => {
+                continue;
+            }
+            _ => unreachable!("Didn't recognise key"),
         }
     }
     true
 }
 
 #[test]
-fn day4_part1_test1()
-{
-    let test_data = 
-"ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
+fn day4_part1_test1() {
+    let test_data = "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
 byr:1937 iyr:2017 cid:147 hgt:183cm
 
 iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884
@@ -145,10 +155,8 @@ iyr:2011 ecl:brn hgt:59in";
 }
 
 #[test]
-fn day4_part2_test1()
-{
-    let test_data = 
-"eyr:1972 cid:100
+fn day4_part2_test1() {
+    let test_data = "eyr:1972 cid:100
 hcl:#18171d ecl:amb hgt:170 pid:186cm iyr:2018 byr:1926
 
 iyr:2019
@@ -166,10 +174,8 @@ pid:3556412378 byr:2007";
 }
 
 #[test]
-fn day4_part2_test2()
-{
-    let test_data = 
-"pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980
+fn day4_part2_test2() {
+    let test_data = "pid:087499704 hgt:74in ecl:grn iyr:2012 eyr:2030 byr:1980
 hcl:#623a2f
 
 eyr:2029 ecl:blu cid:129 byr:1989

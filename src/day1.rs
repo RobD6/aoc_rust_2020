@@ -5,12 +5,12 @@ pub fn input_generator(input: &str) -> Vec<u32> {
 
 #[aoc(day1, part1)]
 pub fn solve_part1(input: &[u32]) -> u32 {
-    for i in 0..input.len(){
+    for i in 0..input.len() {
         let num = input[i];
-        for j in i+1..input.len() {
+        for j in i + 1..input.len() {
             let num2 = input[j];
 
-            if num+num2 == 2020 {
+            if num + num2 == 2020 {
                 return num * num2;
             }
         }
@@ -21,9 +21,9 @@ pub fn solve_part1(input: &[u32]) -> u32 {
 
 #[aoc(day1, part2)]
 pub fn solve_part2(input: &[u32]) -> u32 {
-    for i in 0..input.len(){
+    for i in 0..input.len() {
         let num = input[i];
-        for j in i+1..input.len() {
+        for j in i + 1..input.len() {
             let num2 = input[j];
 
             let sum_two = num + num2;
@@ -32,9 +32,9 @@ pub fn solve_part2(input: &[u32]) -> u32 {
                 continue;
             }
 
-            for k in j+1..input.len() {
+            for k in j + 1..input.len() {
                 let num3 = input[k];
-                if sum_two+num3 == 2020 {
+                if sum_two + num3 == 2020 {
                     return num * num2 * num3;
                 }
             }

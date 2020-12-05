@@ -1,23 +1,26 @@
 #[aoc_generator(day3)]
 pub fn input_generator(input: &str) -> Vec<Vec<bool>> {
-    input.lines().map(|line| line.chars().
-        map(|cr| cr == '#').collect()).collect()
+    input
+        .lines()
+        .map(|line| line.chars().map(|cr| cr == '#').collect())
+        .collect()
 }
 
 #[aoc(day3, part1)]
-pub fn part1 (input: &Vec<Vec<bool>>) -> u32{
+pub fn part1(input: &Vec<Vec<bool>>) -> u32 {
     count_collisions(input, (3, 1))
 }
 
 #[aoc(day3, part2)]
-pub fn part2 (input: &Vec<Vec<bool>>) -> u32{
-    [(1,1), (3,1), (5,1), (7,1), (1,2)].iter().
-        map(|step| count_collisions(input, *step)).
-        product()
+pub fn part2(input: &Vec<Vec<bool>>) -> u32 {
+    [(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
+        .iter()
+        .map(|step| count_collisions(input, *step))
+        .product()
 }
 
 pub fn count_collisions(input: &Vec<Vec<bool>>, step: (usize, usize)) -> u32 {
-    let mut coords = (0,0);
+    let mut coords = (0, 0);
     let mut tree_count = 0;
 
     while coords.1 < input.len() {
@@ -34,10 +37,8 @@ pub fn count_collisions(input: &Vec<Vec<bool>>, step: (usize, usize)) -> u32 {
 }
 
 #[test]
-fn day3_part1_test1()
-{
-    let test_data = 
-"..##.......
+fn day3_part1_test1() {
+    let test_data = "..##.......
 #...#...#..
 .#....#..#.
 ..#.#...#.#
@@ -53,10 +54,8 @@ fn day3_part1_test1()
 }
 
 #[test]
-fn day3_part2_test1()
-{
-    let test_data = 
-    "..##.......
+fn day3_part2_test1() {
+    let test_data = "..##.......
 #...#...#..
 .#....#..#.
 ..#.#...#.#

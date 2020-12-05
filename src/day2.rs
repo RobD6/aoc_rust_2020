@@ -16,7 +16,7 @@ pub fn solve_part1(input: &str) -> u32 {
         let count = passwd.matches(cr).count();
 
         if (min <= count) && (count <= max) {
-            ok_count+=1;
+            ok_count += 1;
         }
     }
 
@@ -39,11 +39,11 @@ pub fn solve_part2(input: &str) -> u32 {
         let mut found = false;
 
         for (index, test_cr) in passwd.chars().enumerate() {
-            if index+1 == min {
+            if index + 1 == min {
                 found = test_cr == cr;
             }
 
-            if index+1 == max {
+            if index + 1 == max {
                 let is_char = test_cr == cr;
 
                 if (found && !is_char) || (!found && is_char) {
@@ -59,15 +59,13 @@ pub fn solve_part2(input: &str) -> u32 {
 }
 
 #[test]
-fn day2_part1_test1()
-{
+fn day2_part1_test1() {
     let test_data = "1-3 a: abcde\n1-3 b: cdefg\n2-9 c: ccccccccc";
     assert_eq!(solve_part1(test_data), 2);
 }
 
 #[test]
-fn day2_part1_test2()
-{
+fn day2_part1_test2() {
     let test_data = "1-3 a: abcde\n1-3 b: cdefg\n2-9 c: ccccccccc";
     assert_eq!(solve_part2(test_data), 1);
 }
