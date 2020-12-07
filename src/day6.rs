@@ -17,9 +17,7 @@ pub fn solve_part1(input: &str) -> u32 {
         for cr in trimmed.chars() {
             if !cur_group.contains_key(&cr) {
                 cur_group.insert(cr, 1);
-            }
-            else
-            {
+            } else {
                 cur_group.insert(cr, cur_group[&cr] + 1);
             }
         }
@@ -30,9 +28,8 @@ pub fn solve_part1(input: &str) -> u32 {
     total
 }
 
-fn get_group_count(num: u32, counts: HashMap<char, u32>) -> u32
-{
-    counts.iter().filter(|(cr, val)| num == **val).count() as u32
+fn get_group_count(num: u32, counts: HashMap<char, u32>) -> u32 {
+    counts.iter().filter(|(_cr, val)| num == **val).count() as u32
 }
 
 #[aoc(day6, part2)]
@@ -42,7 +39,6 @@ pub fn solve_part2(input: &str) -> u32 {
     let mut cur_group: HashMap<char, u32> = HashMap::new();
     let mut members = 0;
     for line in input.lines() {
-        
         let trimmed = line.trim();
 
         if trimmed.len() == 0 {
@@ -56,9 +52,7 @@ pub fn solve_part2(input: &str) -> u32 {
         for cr in trimmed.chars() {
             if !cur_group.contains_key(&cr) {
                 cur_group.insert(cr, 1);
-            }
-            else
-            {
+            } else {
                 cur_group.insert(cr, cur_group[&cr] + 1);
             }
         }
