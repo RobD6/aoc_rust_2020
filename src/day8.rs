@@ -1,7 +1,7 @@
-use std::{collections::HashSet, fs};
 use crate::console::Console;
 use crate::console::Op;
 use std::collections::VecDeque;
+use std::{collections::HashSet, fs};
 
 #[aoc(day8, part1)]
 pub fn solve_part1(input: &str) -> i32 {
@@ -30,13 +30,15 @@ pub fn solve_part2(input: &str) -> i32 {
         println!("Trying new run...");
 
         while !cons.terminated() && !used.contains(&cons.get_pc()) {
-            if is_first_run && 
-                cons.get_next_op() == Op::Jmp || 
-                cons.get_next_op() == Op::Nop {
-                    let mut copy = cons.clone();
-                    let new_op = if cons.get_next_op() == Op::Jmp {Op::Nop} else {Op::Jmp};
-                    copy.set_next_op(new_op);
-                    queue.push_back(copy);
+            if is_first_run && (cons.get_next_op() == Op::Jmp || cons.get_next_op() == Op::Nop) {
+                let mut copy = cons.clone();
+                let new_op = if cons.get_next_op() == Op::Jmp {
+                    Op::Nop
+                } else {
+                    Op::Jmp
+                };
+                copy.set_next_op(new_op);
+                queue.push_back(copy);
             }
 
             used.insert(cons.get_pc());
@@ -83,6 +85,7 @@ acc +6";
 
 #[test]
 fn day8_part2_test2() {
-    let test_data = fs::read_to_string(r"input/2020/day8.txt").expect("Something went wrong reading the file");
+    let test_data =
+        fs::read_to_string(r"input/2020/day8.txt").expect("Something went wrong reading the file");
     assert_eq!(solve_part2(&test_data), 8);
 }

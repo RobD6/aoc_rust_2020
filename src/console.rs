@@ -2,15 +2,15 @@ use regex::Regex;
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum Op {
-        Nop,
-        Acc,
-        Jmp
-    }
+    Nop,
+    Acc,
+    Jmp,
+}
 #[derive(Clone)]
 pub struct Console {
     prog: Vec<(Op, i32)>,
     acc: i32,
-    pc: usize 
+    pc: usize,
 }
 
 impl Console {
@@ -19,12 +19,14 @@ impl Console {
         let inst_regex = Regex::new(r"^(\w+) ([+-]\d+)").unwrap();
 
         for line in input.lines() {
-            let caps = inst_regex.captures(line.trim()).expect("Failed to parse input line {}");
+            let caps = inst_regex
+                .captures(line.trim())
+                .expect("Failed to parse input line {}");
             let op = match &caps[1] {
                 "nop" => Op::Nop,
                 "acc" => Op::Acc,
                 "jmp" => Op::Jmp,
-                _ => unreachable!()
+                _ => unreachable!(),
             };
 
             let param: i32 = caps[2].parse().expect("Failed to parse parameter");
@@ -35,7 +37,7 @@ impl Console {
         Console {
             prog,
             acc: 0,
-            pc: 0
+            pc: 0,
         }
     }
 
@@ -55,7 +57,7 @@ impl Console {
                 self.pc += 1;
             }
             Op::Jmp => {
-                self.pc = ((self.pc as i32) + *param) as usize; 
+                self.pc = ((self.pc as i32) + *param) as usize;
             }
             Op::Acc => {
                 self.acc += param;
@@ -73,6 +75,6 @@ impl Console {
     }
 
     pub fn terminated(&self) -> bool {
-        self.pc >= self.prog.len()        
+        self.pc >= self.prog.len()
     }
 }
