@@ -54,8 +54,31 @@ fn find_first_invalid(input: &str, window: u32) -> u64 {
 }
 
 #[aoc(day9, part2)]
-pub fn solve_part2(input: &str) -> u32 {
-    0
+pub fn solve_part2(input: &str) -> u64 {
+    let target = find_first_invalid(input, 25);
+
+    let mut window = (0, 0);
+    let nums: Vec<u64> = input.lines().map(|line| line.trim().parse().unwrap()).collect();
+    let mut sum = nums[0];
+
+    while sum != target {
+        if sum < target {
+            window.1 += 1;
+            sum += nums[window.1];
+        }
+        else {
+            window.0 += 1;
+            sum -= nums[window.0-1];
+        }
+    }
+    let mut min: u64 = nums[window.0];
+    let mut max: u64 = nums[window.1];
+
+    for val in &nums[window.0 .. window.1] {
+        min = std::cmp::min(*val, min);
+        max = std::cmp::max(*val, max);
+    }
+    min + max
 }
 
 #[test]
