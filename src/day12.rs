@@ -29,8 +29,7 @@ enum Instruction {
 type Operation = (Instruction, i32);
 type State = ((i32, i32), Direction);
 
-#[aoc(day12, part1)]
-pub fn solve_part1(input: &str) -> i32 {
+fn parse_input(input: &str) -> Vec<Operation> {
     let ops: Vec<Operation> = input.lines().map(|line|{
         let inst = match line.trim().chars().nth(0).unwrap() {
             'N' => Instruction::North,
@@ -45,7 +44,14 @@ pub fn solve_part1(input: &str) -> i32 {
         let num: i32 = line.trim()[1..].parse().unwrap();
         (inst, num)
     }).collect();
-    
+
+    ops
+}
+
+#[aoc(day12, part1)]
+pub fn solve_part1(input: &str) -> i32 {
+
+    let ops = parse_input(input);
     let mut state: State = ((0, 0), Direction::East);
 
     for op in ops {
@@ -90,9 +96,63 @@ fn process_instruction(mut state: &mut State, op: Operation) {
     }
 }
 
+type State2 = ((i32, i32), (i32, i32));
+
+fn rotate_waypoint_right(num: u32, offset: (i32, i32)) -> (i32, i32) {
+    match num {
+        1 => {
+            return (offset.1, -offset.0);
+        }
+        2 => {
+            return (-offset.0, -offset.1);
+        }
+        3 => {
+            return (-offset.1, offset.0);
+        }
+        _ => unreachable!("Unknown rotation")
+    }
+}
+
+fn process_instruction2(mut state: &mut State2, op: Operation) {
+    match op.0 {
+        Instruction::North => {
+            state.1.1 += op.1;
+        }
+        Instruction::South => {
+            state.1.1 -= op.1;
+        }
+        Instruction::East => {
+            state.1.0 += op.1;
+        }
+        Instruction::West => {
+            state.1.0 -= op.1;
+        }
+        Instruction::Left => {
+            let rot = 4 - (op.1 / 90);
+            state.1 = rotate_waypoint_right(rot as u32, state.1);
+        }
+        Instruction::Right => {
+            let rot = op.1 / 90;
+            state.1 = rotate_waypoint_right(rot as u32, state.1);
+        }
+        Instruction::Forward => {
+                state.0.0 += state.1.0 * op.1;
+                state.0.1 += state.1.1 * op.1;
+            
+        }
+    }
+}
+
 #[aoc(day12, part2)]
-pub fn solve_part2(input: &str) -> u32 {
-    0
+pub fn solve_part2(input: &str) -> i32 {
+    let ops = parse_input(input);
+    let mut state: State2 = ((0, 0), (10, 1));
+
+    for op in ops {
+        process_instruction2(&mut state, op)
+    }
+    
+    state.0.0.abs() + state.0.1.abs()
 }
 
 #[test]
