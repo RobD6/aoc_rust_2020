@@ -60,11 +60,6 @@ fn parse_mask(mask: &str) -> (u64, u64) {
     (and_mask, or_mask)
 }
 
-#[aoc(day14, part2)]
-pub fn solve_part2(input: &str) -> u64 {
-0
-}
-
 #[test]
 fn day14_part1_test1() {
     let test_data = "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
@@ -72,10 +67,4 @@ mem[8] = 11
 mem[7] = 101
 mem[8] = 0";
     assert_eq!(solve_part1(test_data), 165);
-}
-
-#[test]
-fn day2_part1_test2() {
-    let test_data = "1-3 a: abcde\n1-3 b: cdefg\n2-9 c: ccccccccc";
-    assert_eq!(solve_part2(test_data), 1);
 }
