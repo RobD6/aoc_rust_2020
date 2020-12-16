@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{VecDeque};
 use regex::Regex;
 
 struct Rule {
@@ -11,7 +11,7 @@ fn parse_input(input: &str) -> (Vec<Rule>, Vec<u32>, Vec<Vec<u32>>) {
     let mut your_ticket = Vec::new();
     let mut other_tickets = Vec::new();
 
-    let reg = Regex::new(r"(\w+): (\d+)-(\d+) or (\d+)-(\d+)").unwrap();
+    let reg = Regex::new(r"([\w ]+): (\d+)-(\d+) or (\d+)-(\d+)").unwrap();
     let mut next_line_is_your_ticket = false;
     let mut is_in_nearby_tickets = false;
 
@@ -82,7 +82,7 @@ pub fn solve_part1(input: &str) -> u32 {
 }
 
 #[aoc(day16, part2)]
-pub fn solve_part2(input: &str) -> u32 {
+pub fn solve_part2(input: &str) -> u64 {
     let parsed = parse_input(input);
     let rules = parsed.0;
     let my_ticket = parsed.1;
@@ -108,43 +108,61 @@ pub fn solve_part2(input: &str) -> u32 {
         }
     }
 
-    let mut possible_field_rules = HashMap::new();
+    let mut possible_field_rules = Vec::new();
     let mut all_rules = Vec::new();
     for rule in 0..rules.len() {
         all_rules.push(rule);
     }
 
     for field in 0..my_ticket.len() {
-        possible_field_rules.insert(field, all_rules.clone());
+        possible_field_rules.push(all_rules.clone());
     }
+
+    let mut known_rules = VecDeque::new();
 
     for ticket in valid_tickets {
         for (field, num) in ticket.iter().enumerate() {
             for rule in rules.iter().enumerate() {
-                if possible_field_rules.get(&field).unwrap().contains(&rule.0) {
+                if possible_field_rules.get(field).unwrap().contains(&rule.0) {
                     if !is_valid_for_rule(rule.1, *num)
                     {
-                        let mut rules_list = possible_field_rules.get_mut(&field).unwrap();
+                        let rules_list = possible_field_rules.get_mut(field).unwrap();
                         rules_list.remove(rules_list.iter().position(|x| *x == rule.0).expect("rule not found"));
+
+                        if rules_list.len() == 1 {
+                            known_rules.push_back(rules_list[0]);
+                        }
                     }
                 }
             }
         }
     }
 
-    let mut needs_reduction = true;
+    while known_rules.len() != 0 {
+        let rule_index = known_rules.pop_front().unwrap();
 
-    while needs_reduction {
-        let mut used_rules = Vec::new();
-        for possible in &possible_field_rules {
-            if possible.1.len() == 1 {
-                used_rules.push(possible.1[0]);
-            }
+        for i in 0..possible_field_rules.len() {
+            if possible_field_rules[i].len() > 1 &&
+                possible_field_rules[i].contains(&rule_index) {
+                    let index = possible_field_rules[i].iter().position(|x| *x == rule_index).unwrap();
+                    possible_field_rules[i].remove(index);
+
+                    if possible_field_rules[i].len() == 1 {
+                        known_rules.push_back(possible_field_rules[i][0]);
+                    }
+                }
         }
     }
 
+    let mut result = 1;
+    for (index, num) in my_ticket.iter().enumerate() {
+        println!("Field {} name is {}", index, rules[possible_field_rules[index][0]].name);
+        if rules[possible_field_rules[index][0]].name.contains("departure") {
+            result *= *num as u64;
+        }
+    }
 
-    0
+    result
 }
 
 
