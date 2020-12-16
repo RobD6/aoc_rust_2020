@@ -67,7 +67,6 @@ fn is_valid_for_any_rule(rules: &Vec<Rule>, num: u32) -> bool {
 pub fn solve_part1(input: &str) -> u32 {
     let parsed = parse_input(input);
     let rules = parsed.0;
-    let my_ticket = parsed.1;
     let other_tickets = parsed.2;
 
     let mut error_rate = 0;
@@ -133,11 +132,17 @@ pub fn solve_part2(input: &str) -> u32 {
         }
     }
 
-    for possible in possible_field_rules {
-        println!("Options for {}: {}", possible.0, possible.1.len());
+    let mut needs_reduction = true;
+
+    while needs_reduction {
+        let mut used_rules = Vec::new();
+        for possible in &possible_field_rules {
+            if possible.1.len() == 1 {
+                used_rules.push(possible.1[0]);
+            }
+        }
     }
 
-    //Now find one with only 1 possible rule, and eliminate that rule from other fields, until all only have 1
 
     0
 }
