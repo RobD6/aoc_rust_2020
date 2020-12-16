@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use regex::Regex;
 
 struct Rule {
@@ -42,12 +43,20 @@ fn parse_input(input: &str) -> (Vec<Rule>, Vec<u32>, Vec<Vec<u32>>) {
     (list, your_ticket, other_tickets)
 }
 
+fn is_valid_for_rule(rule: &Rule, num: u32) -> bool {
+    for range in &rule.ranges {
+        if num >= range.0 && num <= range.1 {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 fn is_valid_for_any_rule(rules: &Vec<Rule>, num: u32) -> bool {
     for rule in rules {
-        for range in &rule.ranges {
-            if num >= range.0 && num <= range.1 {
-                return true;
-            }
+        if is_valid_for_rule(rule, num) {
+            return true;
         }
     }
 
@@ -73,6 +82,67 @@ pub fn solve_part1(input: &str) -> u32 {
     error_rate
 }
 
+#[aoc(day16, part2)]
+pub fn solve_part2(input: &str) -> u32 {
+    let parsed = parse_input(input);
+    let rules = parsed.0;
+    let my_ticket = parsed.1;
+    let other_tickets = parsed.2;
+    let mut valid_tickets = Vec::new();
+
+    for ticket in other_tickets {
+        let mut valid = true;
+        for num in &ticket {
+            if !is_valid_for_any_rule(&rules, *num) {
+                valid = false;
+                break;
+            }
+        }
+
+        if valid {
+            //Keep rust happy...
+            let mut tick_copy = Vec::new();
+            for num in ticket {
+                tick_copy.push(num);
+            }
+            valid_tickets.push(tick_copy);
+        }
+    }
+
+    let mut possible_field_rules = HashMap::new();
+    let mut all_rules = Vec::new();
+    for rule in 0..rules.len() {
+        all_rules.push(rule);
+    }
+
+    for field in 0..my_ticket.len() {
+        possible_field_rules.insert(field, all_rules.clone());
+    }
+
+    for ticket in valid_tickets {
+        for (field, num) in ticket.iter().enumerate() {
+            for rule in rules.iter().enumerate() {
+                if possible_field_rules.get(&field).unwrap().contains(&rule.0) {
+                    if !is_valid_for_rule(rule.1, *num)
+                    {
+                        let mut rules_list = possible_field_rules.get_mut(&field).unwrap();
+                        rules_list.remove(rules_list.iter().position(|x| *x == rule.0).expect("rule not found"));
+                    }
+                }
+            }
+        }
+    }
+
+    for possible in possible_field_rules {
+        println!("Options for {}: {}", possible.0, possible.1.len());
+    }
+
+    //Now find one with only 1 possible rule, and eliminate that rule from other fields, until all only have 1
+
+    0
+}
+
+
 #[test]
 fn day2_part1_test1() {
     let test_data = "class: 1-3 or 5-7
@@ -88,4 +158,20 @@ nearby tickets:
 55,2,20
 38,6,12";
     assert_eq!(solve_part1(test_data), 71);
+}
+
+#[test]
+fn day2_part2_test1() {
+    let test_data = "class: 0-1 or 4-19
+row: 0-5 or 8-19
+seat: 0-13 or 16-19
+
+your ticket:
+11,12,13
+
+nearby tickets:
+3,9,18
+15,1,5
+5,14,9";
+    assert_eq!(solve_part2(test_data), 71);
 }
