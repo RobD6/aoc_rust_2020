@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 pub fn solve(input: &str, number: usize) -> u32 {
-    let mut nums: Vec<u32> = input.split(',').map(|nums_str| nums_str.parse::<u32>().unwrap()).collect();
+    let nums: Vec<u32> = input.split(',').map(|nums_str| nums_str.parse::<u32>().unwrap()).collect();
 
     let mut map = HashMap::new();
 

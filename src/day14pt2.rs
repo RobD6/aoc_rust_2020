@@ -16,11 +16,11 @@ pub fn solve_part2(input: &str) -> u64 {
             or_mask = masks.0;
             and_or_list = masks.1;
         }
-        else if (mem_regex.is_match(line.trim())) {
+        else if mem_regex.is_match(line.trim()) {
             let caps = mem_regex.captures(line.trim()).unwrap();
 
             let mut addr: u64 = caps[1].parse().unwrap();
-            let mut val: u64 = caps[2].parse().unwrap();
+            let val: u64 = caps[2].parse().unwrap();
 
             addr = addr | or_mask;
             for (and, or) in &and_or_list {
@@ -35,7 +35,7 @@ pub fn solve_part2(input: &str) -> u64 {
     }
 
     let mut sum = 0u64;
-    for (addr, val) in mem {
+    for (_addr, val) in mem {
         sum += val;
     }
 
@@ -52,7 +52,7 @@ fn parse_mask(mask: &str) -> (u64, Vec<(u64, u64)>) {
             '0' => {
             }
             '1' => {
-                or_mask |= (1 << (num_bits - index - 1));
+                or_mask |= 1 << (num_bits - index - 1);
             }
             'X' => {
                 let mut new_list = Vec::new();

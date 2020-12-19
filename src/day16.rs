@@ -114,7 +114,7 @@ pub fn solve_part2(input: &str) -> u64 {
         all_rules.push(rule);
     }
 
-    for field in 0..my_ticket.len() {
+    for _field in 0..my_ticket.len() {
         possible_field_rules.push(all_rules.clone());
     }
 

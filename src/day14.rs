@@ -16,7 +16,7 @@ pub fn solve_part1(input: &str) -> u64 {
             and_mask = masks.0;
             or_mask = masks.1;
         }
-        else if (mem_regex.is_match(line.trim())) {
+        else if mem_regex.is_match(line.trim()) {
             let caps = mem_regex.captures(line.trim()).unwrap();
 
             let addr: u64 = caps[1].parse().unwrap();
@@ -30,7 +30,7 @@ pub fn solve_part1(input: &str) -> u64 {
     }
 
     let mut sum = 0u64;
-    for (addr, val) in mem {
+    for (_addr, val) in mem {
         sum += val;
     }
 
@@ -48,7 +48,7 @@ fn parse_mask(mask: &str) -> (u64, u64) {
                 and_mask &= !(1 << (num_bits - index - 1));
             }
             '1' => {
-                or_mask |= (1 << (num_bits - index - 1));
+                or_mask |= 1 << (num_bits - index - 1);
             }
             'X' => {
 

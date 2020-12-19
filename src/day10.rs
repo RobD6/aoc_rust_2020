@@ -1,6 +1,9 @@
 #[aoc(day10, part1)]
 pub fn solve_part1(input: &str) -> u32 {
-    let mut nums: Vec<u32> = input.lines().map(|line| line.trim().parse().unwrap()).collect();
+    let mut nums: Vec<u32> = input
+        .lines()
+        .map(|line| line.trim().parse().unwrap())
+        .collect();
     nums.sort();
 
     let mut one_gaps = 0;
@@ -8,18 +11,16 @@ pub fn solve_part1(input: &str) -> u32 {
 
     if nums[0] == 1 {
         one_gaps += 1;
-    }
-    else if nums[0] == 3 {
+    } else if nums[0] == 3 {
         three_gaps += 1;
     }
 
-    for index in 0..nums.len()-1 {
-        let gap = nums[index+1] - nums[index];
+    for index in 0..nums.len() - 1 {
+        let gap = nums[index + 1] - nums[index];
 
         if gap == 1 {
             one_gaps += 1;
-        }
-        else if gap == 3 {
+        } else if gap == 3 {
             three_gaps += 1;
         }
     }
@@ -33,18 +34,21 @@ pub fn solve_part1(input: &str) -> u32 {
 pub fn solve_part2(input: &str) -> u64 {
     let mut num_paths = 1u64;
 
-    let mut nums: Vec<u32> = input.lines().map(|line| line.trim().parse().unwrap()).collect();
+    let mut nums: Vec<u32> = input
+        .lines()
+        .map(|line| line.trim().parse().unwrap())
+        .collect();
     nums.sort();
 
     let mut gap_run = 0;
     let mut max_run = 0;
 
-    if nums[0] == 1 { gap_run = 1; }
+    if nums[0] == 1 {
+        gap_run = 1;
+    }
 
     for i in 0..nums.len() {
-        if i == nums.len()-1 ||
-           nums[i+1] - nums[i] == 3
-            {
+        if i == nums.len() - 1 || nums[i + 1] - nums[i] == 3 {
             //End of run of 1 gaps
             max_run = std::cmp::max(gap_run, max_run);
 
@@ -52,18 +56,23 @@ pub fn solve_part2(input: &str) -> u64 {
             match gap_run {
                 0 => {}
                 1 => {}
-                2 => {mul = 2;}
-                3 => {mul = 4;}
-                4 => {mul = 7;}
-                _ => unreachable!("Unknown gap size")
+                2 => {
+                    mul = 2;
+                }
+                3 => {
+                    mul = 4;
+                }
+                4 => {
+                    mul = 7;
+                }
+                _ => unreachable!("Unknown gap size"),
             }
 
             num_paths *= mul;
 
             gap_run = 0;
-        }
-        else {
-            assert_eq!(nums[i+1] - nums[i], 1);
+        } else {
+            assert_eq!(nums[i + 1] - nums[i], 1);
             gap_run += 1;
         }
     }

@@ -4,31 +4,32 @@ use std::collections::HashMap;
 pub enum Seat {
     Empty,
     Full,
-    Floor
+    Floor,
 }
 
 type State = Vec<Vec<Seat>>;
 
 pub fn input_generator(input: &str) -> State {
-    input.lines().map(
-        |line| {
-            line.trim().chars().map(|cr| {
-                match cr {
+    input
+        .lines()
+        .map(|line| {
+            line.trim()
+                .chars()
+                .map(|cr| match cr {
                     'L' => Seat::Empty,
                     '.' => Seat::Floor,
                     '#' => Seat::Full,
-                    _ => unreachable!("Unknown seat state")
-                }
-            }).collect()
-        }).collect()
+                    _ => unreachable!("Unknown seat state"),
+                })
+                .collect()
+        })
+        .collect()
 }
 
 fn count_cell(state: &State, pos: (usize, usize)) -> bool {
-    if pos.0 >= 0 && pos.1 >= 0 &&
-        pos.1 < state.len() &&
-        pos.0 < state[pos.1].len() {
-            return state[pos.1][pos.0] == Seat::Full;
-        }
+    if pos.1 < state.len() && pos.0 < state[pos.1].len() {
+        return state[pos.1][pos.0] == Seat::Full;
+    }
 
     return false;
 }
@@ -39,7 +40,10 @@ pub fn count_occupied_neighbours(state: &State, pos: (usize, usize)) -> u32 {
     for x in -1i32..2 {
         for y in -1i32..2 {
             if x != 0 || y != 0 {
-                if count_cell(state, ((pos.0 as i32 + x) as usize, (pos.1 as i32 + y) as usize)) {
+                if count_cell(
+                    state,
+                    ((pos.0 as i32 + x) as usize, (pos.1 as i32 + y) as usize),
+                ) {
                     count += 1;
                 }
             }
@@ -62,13 +66,13 @@ pub fn step_state(state: &mut State) -> bool {
                         state[y][x] = Seat::Full;
                         changed = true;
                     }
-                },
+                }
                 Seat::Full => {
                     if count_occupied_neighbours(&state_copy, (x, y)) >= 4 {
                         state[y][x] = Seat::Empty;
                         changed = true;
                     }
-                },
+                }
                 _ => {}
             }
         }
@@ -78,9 +82,10 @@ pub fn step_state(state: &mut State) -> bool {
 }
 
 fn count_occupied_seats(state: State) -> u32 {
-    state.iter().map(|column| 
-        column.iter().filter(|seat| 
-            **seat == Seat::Full).count() as u32).sum()
+    state
+        .iter()
+        .map(|column| column.iter().filter(|seat| **seat == Seat::Full).count() as u32)
+        .sum()
 }
 
 #[aoc(day11, part1)]
@@ -98,11 +103,18 @@ pub fn solve_part1(input: &str) -> u32 {
 
 type CellCache = HashMap<((usize, usize), (i32, i32)), (bool, (usize, usize))>;
 
-fn get_seat_in_dir(state: &State, pos: (usize, usize), dir: (i32, i32), mut cellcache: &mut CellCache) -> Seat {
+fn get_seat_in_dir(
+    state: &State,
+    pos: (usize, usize),
+    dir: (i32, i32),
+    mut cellcache: &mut CellCache,
+) -> Seat {
     //See if it's in the cache
     match cellcache.get(&(pos, dir)) {
         Some((has_val, new_pos)) => {
-            if *has_val {return state[new_pos.1][new_pos.0];}
+            if *has_val {
+                return state[new_pos.1][new_pos.0];
+            }
             return Seat::Floor;
         }
         None => {}
@@ -110,27 +122,38 @@ fn get_seat_in_dir(state: &State, pos: (usize, usize), dir: (i32, i32), mut cell
 
     let moved = (pos.0 as i32 + dir.0, pos.1 as i32 + dir.1);
 
-    if moved.0 >= 0 && moved.1 >= 0 &&
-        moved.1 < state.len() as i32 &&
-        moved.0 < state[moved.1 as usize].len() as i32 {
-            if state[moved.1 as usize][moved.0 as usize] == Seat::Floor {
-                let result = get_seat_in_dir(state, (moved.0 as usize, moved.1 as usize), dir, &mut cellcache);
-                cellcache.insert((pos, dir), cellcache[&((moved.0 as usize, moved.1 as usize), dir)]);
-                return result;
-            }
-            else
-            {
-                cellcache.insert((pos, dir), (true, (moved.0 as usize, moved.1 as usize)));
-            }
-    }
-    else {
+    if moved.0 >= 0
+        && moved.1 >= 0
+        && moved.1 < state.len() as i32
+        && moved.0 < state[moved.1 as usize].len() as i32
+    {
+        if state[moved.1 as usize][moved.0 as usize] == Seat::Floor {
+            let result = get_seat_in_dir(
+                state,
+                (moved.0 as usize, moved.1 as usize),
+                dir,
+                &mut cellcache,
+            );
+            cellcache.insert(
+                (pos, dir),
+                cellcache[&((moved.0 as usize, moved.1 as usize), dir)],
+            );
+            return result;
+        } else {
+            cellcache.insert((pos, dir), (true, (moved.0 as usize, moved.1 as usize)));
+        }
+    } else {
         cellcache.insert((pos, dir), (false, (0, 0)));
     }
 
     Seat::Floor
 }
 
-pub fn count_occupied_neighbours2(state: &State, pos: (usize, usize), mut cellcache: &mut CellCache ) -> u32 {
+pub fn count_occupied_neighbours2(
+    state: &State,
+    pos: (usize, usize),
+    mut cellcache: &mut CellCache,
+) -> u32 {
     let mut count = 0;
 
     for x in -1..2 {
@@ -146,7 +169,7 @@ pub fn count_occupied_neighbours2(state: &State, pos: (usize, usize), mut cellca
     count
 }
 
-pub fn step_state2(state: &mut State, mut cellcache: &mut CellCache ) -> bool {
+pub fn step_state2(state: &mut State, mut cellcache: &mut CellCache) -> bool {
     let mut changed = false;
     let state_copy = state.clone();
 
@@ -159,13 +182,13 @@ pub fn step_state2(state: &mut State, mut cellcache: &mut CellCache ) -> bool {
                         state[y][x] = Seat::Full;
                         changed = true;
                     }
-                },
+                }
                 Seat::Full => {
                     if count_occupied_neighbours2(&state_copy, (x, y), &mut cellcache) >= 5 {
                         state[y][x] = Seat::Empty;
                         changed = true;
                     }
-                },
+                }
                 _ => {}
             }
         }
@@ -174,19 +197,19 @@ pub fn step_state2(state: &mut State, mut cellcache: &mut CellCache ) -> bool {
     changed
 }
 
-fn print_state(state: &State) {
-    for row in state {
-        for cell in row {
-            print!( "{}", match cell{
-                Seat::Floor => ".",
-                Seat::Full => "#",
-                Seat::Empty => "L"
-            });
-        }
-        print!("\n");
-    }
-    print!("\n\n");
-}
+// fn print_state(state: &State) {
+//     for row in state {
+//         for cell in row {
+//             print!( "{}", match cell{
+//                 Seat::Floor => ".",
+//                 Seat::Full => "#",
+//                 Seat::Empty => "L"
+//             });
+//         }
+//         print!("\n");
+//     }
+//     print!("\n\n");
+// }
 
 #[aoc(day11, part2)]
 pub fn solve_part2(input: &str) -> u32 {
