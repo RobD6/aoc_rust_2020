@@ -1,7 +1,7 @@
 use crate::console::Console;
 use crate::console::Op;
 use std::collections::VecDeque;
-use std::{collections::HashSet};
+use std::{collections::HashSet, fs};
 
 #[aoc(day8, part1)]
 pub fn solve_part1(input: &str) -> i32 {
